@@ -7,7 +7,7 @@ void erase_ship();
 int main()
 {
     char t;
-    int x=79,y=20;
+    int x=1,y=20;
     printf("Press wasd to move and press x to quit");
     drawship(x,y);
     do

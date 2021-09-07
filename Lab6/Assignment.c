@@ -16,31 +16,25 @@ int main()
     char ch=' ',mem;
     int x=38,y=20,a,b,count=0;
     bool ammo=0;
+    setcolor(12,0);
+    gotoxy(0,21);
+    printf("Press A D to move Ship press ' to fire and press S  to stop the ship \n X to exit You can fire only 1 bullet at the time");
     draw_ship(x,y);
     do
     {
-        if(kbhit())
+        if(kbhit())//ถ้าระหว่างขยับกดแป้นพิมพ์เข้ามา
         {
+            mem=ch;
             ch=getch();
-            do//สำหรับการขยับ
-            {
-                if(kbhit())//ถ้าระหว่างขยับกดแป้นพิมพ์เข้ามา
-                {
-                    mem=ch;
-                    ch=getch();
-                    if(ch=='s')//หยุดถ้าพิมพ์s
-                    {
-                        break;
-                    }
-                    if(ch=='\''&&ammo==0&&count<=4)
+            if(ch=='\''&&ammo==0&&count<=4)
                     {
                         a=x+2;
                         b=y-1;
                         ch=mem;
                         ammo=1;
                     }
-                }
-                if(ch=='a')//ขยับซ้าย
+        }
+        if(ch=='a')//ขยับซ้าย
                 {
                     if(x>1)
                     {
@@ -52,7 +46,7 @@ int main()
                         }
                     }
                 }
-                if(ch=='d')//ขยับขวา
+        if(ch=='d')//ขยับขวา
                 {
                     if(x<80)
                     {
@@ -64,7 +58,7 @@ int main()
                         }
                     }
                 }
-                if(ammo==1&&b>=3)
+        if(ammo==1&&b>=3)
                 {
                     erasebullet(a,b);
                     firebullet(a,--b);
@@ -73,24 +67,19 @@ int main()
                         erasebullet(a,b);
                         ammo=0; 
                         count++;
-                    }
-                    
+                    }   
                 }
-                if(count==5)
-                {
-                    setcolor(4,7);
-                    gotoxy(0,0);
-                    printf("Out Of Ammo!!!");
-                    count++;
-                }
-                fflush(stdin);
-                Sleep(50);
-            }while (ch!='s'&&ch!='x');
+        if(count==5)//หยุดยิงถ้าถึง5นัด
+        {
+            setcolor(4,0);
+            gotoxy(0,0);
+            printf("\t\tOut Of Ammo!!!");
+            count++;
         }
-        
-        fflush(stdin);//เคลียข้อมูลที่รับเข้ามา      
+        fflush(stdin);
+        Sleep(200);      
     } while (ch!='x');
-    printf("%d",count);
+    getch();
     return 0;
 }
 void gotoxy(int x,int y)

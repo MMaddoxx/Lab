@@ -18,7 +18,7 @@ int main()
     bool ammo=0;
     setcolor(12,0);
     gotoxy(0,21);
-    printf("Press A D to move Ship press ' to fire and press S  to stop the ship \nPress X to exit You can fire only 1 bullet at the time");
+    printf("Press A and D to move Ship Press ' to fire and Press S  to stop the ship \nPress X to exit You can fire ONLY 1 bullet at the time");
     draw_ship(x,y);
     do
     {
@@ -26,53 +26,45 @@ int main()
         {
             mem=ch;
             ch=getch();
-            if(ch!='s'&&ch!='a'&&ch!='d'&&ch!='x'&&ch!='\'')//เอาไว้ ignore ทุกตัวที่ไม่ใช่ตัวที่เป็นcomman
+            if(ch!='s'&&ch!='a'&&ch!='d'&&ch!='x'&&ch!='\'')//เอาไว้ ignore ทุกตัวที่ไม่ใช่ตัวที่เป็นcommand
             {
                 ch=mem;
             }
             if(ch=='\''&&ammo==0&&count<=4)
-                    {
-                        a=x+2;
-                        b=y-1;
-                        ch=mem;
-                        ammo=1;
-                    }
+            {
+                a=x+2;
+                b=y-1;
+                ch=mem;
+                ammo=1;
+            }
         }
         if(ch=='a')//ขยับซ้าย
-                {
-                    if(x>1)
-                    {
-                        erase_ship(x,y);
-                        draw_ship(--x,y);
-                        if(x==1)//หยุดถ้าติดขอบ
-                        {
-                            break;
-                        }
-                    }
-                }
+        {
+            if(x>1)//ขอบซ้าย
+            {
+                erase_ship(x,y);
+                draw_ship(--x,y);
+            }
+        }
         if(ch=='d')//ขยับขวา
-                {
-                    if(x<80)
-                    {
-                        erase_ship(x,y);
-                        draw_ship(++x,y);
-                        if(x==80)//หยุดถ้าติดขอบ
-                        {
-                            break;
-                        }
-                    }
-                }
+        {
+            if(x<80)//ขอบขวา
+            {
+                erase_ship(x,y);
+                draw_ship(++x,y);
+            }
+        }
         if(ammo==1&&b>=3)
-                {
-                    erasebullet(a,b);
-                    firebullet(a,--b);
-                    if(b==2)
-                    {
-                        erasebullet(a,b);
-                        ammo=0; 
-                        count++;
-                    }   
-                }
+        {
+            erasebullet(a,b);
+            firebullet(a,--b);
+            if(b==2)
+            {
+                erasebullet(a,b);
+                ammo=0; 
+                count++;
+            }   
+        }
         if(count==5)//หยุดยิงถ้าถึง5นัด
         {
             setcolor(4,0);

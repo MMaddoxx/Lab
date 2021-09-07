@@ -18,7 +18,7 @@ int main()
     bool ammo=0;
     setcolor(12,0);
     gotoxy(0,21);
-    printf("Press A D to move Ship press ' to fire and press S  to stop the ship \n X to exit You can fire only 1 bullet at the time");
+    printf("Press A D to move Ship press ' to fire and press S  to stop the ship \nPress X to exit You can fire only 1 bullet at the time");
     draw_ship(x,y);
     do
     {
@@ -26,6 +26,10 @@ int main()
         {
             mem=ch;
             ch=getch();
+            if(ch!='s'&&ch!='a'&&ch!='d'&&ch!='x'&&ch!='\'')//เอาไว้ ignore ทุกตัวที่ไม่ใช่ตัวที่เป็นcomman
+            {
+                ch=mem;
+            }
             if(ch=='\''&&ammo==0&&count<=4)
                     {
                         a=x+2;

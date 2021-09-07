@@ -8,36 +8,39 @@ void draw_ship(int x, int y);
 void setcursor(bool visible);
 void setcolor(int fg,int bg);//fg คือสีตัวอักษร bg คือพื้นหลัง 
 void erase_ship();
+void firebullet();
+void erasebullet();
 int main()
 {
     setcursor(0);
     char ch=' ',mem;
-    int x=38,y=20;
+    int x=38,y=20,a,b,count=0;
+    bool ammo=0;
     draw_ship(x,y);
     do
     {
         if(kbhit())
         {
             ch=getch();
-            do
+            do//สำหรับการขยับ
             {
-                if(kbhit())
+                if(kbhit())//ถ้าระหว่างขยับกดแป้นพิมพ์เข้ามา
                 {
-                    mem=getch();
-                    if(mem=='s')//หยุดถ้าพิมพ์s
+                    mem=ch;
+                    ch=getch();
+                    if(ch=='s')//หยุดถ้าพิมพ์s
                     {
                         break;
                     }
-                    else if(mem=='a')
+                    if(ch=='\''&&ammo==0&&count<=4)
                     {
-                        ch='a';
-                    }
-                    else if(mem=='d')
-                    {
-                        ch='d';
+                        a=x+2;
+                        b=y-1;
+                        ch=mem;
+                        ammo=1;
                     }
                 }
-                if(ch=='a')
+                if(ch=='a')//ขยับซ้าย
                 {
                     if(x>1)
                     {
@@ -49,7 +52,7 @@ int main()
                         }
                     }
                 }
-                if(ch=='d')
+                if(ch=='d')//ขยับขวา
                 {
                     if(x<80)
                     {
@@ -61,11 +64,33 @@ int main()
                         }
                     }
                 }
+                if(ammo==1&&b>=3)
+                {
+                    erasebullet(a,b);
+                    firebullet(a,--b);
+                    if(b==2)
+                    {
+                        erasebullet(a,b);
+                        ammo=0; 
+                        count++;
+                    }
+                    
+                }
+                if(count==5)
+                {
+                    setcolor(4,7);
+                    gotoxy(0,0);
+                    printf("Out Of Ammo!!!");
+                    count++;
+                }
                 fflush(stdin);
-                Sleep(200);
-            }while (ch!='s');
+                Sleep(50);
+            }while (ch!='s'&&ch!='x');
         }
+        
+        fflush(stdin);//เคลียข้อมูลที่รับเข้ามา      
     } while (ch!='x');
+    printf("%d",count);
     return 0;
 }
 void gotoxy(int x,int y)
@@ -75,7 +100,7 @@ void gotoxy(int x,int y)
 }
 void draw_ship(int x,int y)
 {
-    setcolor(4,0);
+    setcolor(2,0);
     gotoxy(x,y);
     printf("<-0->");
 }
@@ -97,4 +122,15 @@ void erase_ship(int x, int y)
     COORD c ={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
     printf("     ");
+}
+void firebullet(int x,int y)
+{
+    setcolor(6,0);
+    gotoxy(x,y);
+    printf("|");
+}
+void erasebullet(int x,int y)
+{
+    gotoxy(x,y);
+    printf(" ");
 }

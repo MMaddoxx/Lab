@@ -79,7 +79,6 @@ int main()
         fflush(stdin);
         Sleep(200);      
     } while (ch!='x');
-    getch();
     return 0;
 }
 void gotoxy(int x,int y)

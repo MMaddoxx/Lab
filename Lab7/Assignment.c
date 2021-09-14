@@ -4,6 +4,7 @@
 #include<stdbool.h>
 #include<stdlib.h>
 #include<time.h>
+unsigned int score = 0;
 void gotoxy(int x,int y);
 void draw_ship(int x, int y);
 void setcursor(bool visible);
@@ -12,20 +13,22 @@ void erase_ship();
 void firebullet();
 void erasebullet();
 void drawstar();
-char cursor();//เอาไว้ตรวจสอบการชน
+char cursor();
+void scorebox();
 int main()
 {
     setcursor(0);
     char ch=' ',mem;
-    int x=38,y=20,a,b;
-    bool ammo=0;
+    int x=38,y=20,a,b,count=0;
+    bool ammo=0,firstdraw=0;
+    drawstar(20);
     setcolor(12,0);
     gotoxy(0,21);
-    printf("Press A and D to move Ship Press ' to fire and Press S  to stop the ship \nPress X to exit You can fire ONLY 1 bullet at the time");
+    printf("Press A and D to move Ship Press spacebar to fire and Press S  to stop the ship \nPress X to exit You can fire ONLY 1 bullet at the time");
+    scorebox();
     draw_ship(x,y);
     do
     {
-        drawstar();
         if(kbhit())//ถ้าระหว่างขยับกดแป้นพิมพ์เข้ามา
         {
             mem=ch;
@@ -39,13 +42,13 @@ int main()
                 Beep(2500,200);
                 a=x+2;
                 b=y-1;
-                ch=mem;
+                ch=mem;//เอาคืนจะได้ขยับต่อ
                 ammo=1;
             }
         }
         if(ch=='a')//ขยับซ้าย
         {
-            if(x>1)//ขอบซ้าย
+            if(x>7)//ขอบซ้าย
             {
                 erase_ship(x,y);
                 draw_ship(--x,y);
@@ -53,7 +56,7 @@ int main()
         }
         if(ch=='d')//ขยับขวา
         {
-            if(x<80)//ขอบขวา
+            if(x<68)//ขอบขวา
             {
                 erase_ship(x,y);
                 draw_ship(++x,y);
@@ -64,24 +67,27 @@ int main()
             erasebullet(a,b);
             if(cursor(a,--b)=='*')
             {
-                erasebullet(a,b);
+                erasebullet(a,b);//ลบดาว
                 ammo=0;
+                Beep(600,200);
+                score++;
+                drawstar(1);
+                scorebox();
             }
             else
             {
                 firebullet(a,b);
             }      
         }
-        if(b==1&&ammo==1)
+        if(b==1&&ammo==1)//พอกระสุนถึงขอบก็บลทิ้งแล้วรีเซตให้ยิงนัดใหม่ได้
         {
             erasebullet(a,b);
-            ammo=0; 
-           
+            Beep(400,200);
+            ammo=0;    
         }  
         fflush(stdin);
         Sleep(200);      
     } while (ch!='x'); 
-    drawstar();
     return 0;
 }
 void gotoxy(int x,int y)
@@ -126,21 +132,29 @@ void erasebullet(int x,int y)
     gotoxy(x,y);
     printf(" ");
 }
-void drawstar(void)
+void drawstar(int n)
 {
     srand(time(NULL));
     int i;
-    for(i=1;i<=20;i++)
+    setcolor(7,0);
+    for(i=1;i<=n;i++)
     {
         int sx=rand();
         int sy=rand();
         sx=(sx%(70-9))+9;
         sy=(sy%(5-1))+1;//แถวแรกจะนับเป็น 0 ดังนั้น max จึงเป็น 5
-        gotoxy(sx,sy);
-        printf("*");
+        if(cursor(sx,sy)!='*')
+        {
+            gotoxy(sx,sy);
+            printf("*");
+        }
+        else 
+        {
+            i--;
+        }
     }
 }
-char cursor(int x,int y)
+char cursor(int x,int y)//เอาไว้ตรวจสอบการชน
 {
     HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
     char buf[2];
@@ -154,4 +168,10 @@ char cursor(int x,int y)
     {
         return buf[0];
     }
+}
+void scorebox(void)
+{
+    setcolor(9,0);
+    gotoxy(60,0);
+    printf("Your Score %d",score);
 }

@@ -6,11 +6,11 @@
 #include<conio.h>
 #define screen_x 80
 #define screen_y 25
-#define scount 18
+#define scount 40
 #define esc 27
 ///////////////////PROTORYPE FUNCTION ////////////////////////////////
 int setConsole();//ตั้งกรอบหน้าจอ
-int setMode();//setการรับข้อมูล
+int setMode();
 void setcursor(bool visible);//เปิดปิดcursor
 void clearbuffer();//ล้างbuffer 
 void init_star();//สุ่มตอนเริ่มต้น
@@ -20,6 +20,7 @@ void star_fall();
 void draw_ship(int x,int y,int color);
 void gotoxy(short x,short y);
 void setcolor(int fg,int bg);
+char cursor(short x,short y);
 //////////////////////GLOBAL VARIABLE/////////////////////////////////
 unsigned int score = 0;
 struct starfall
@@ -32,9 +33,9 @@ bool playing = true;
 HANDLE wHnd;
 HANDLE rHnd;
 CHAR_INFO consoleBuffer[screen_x * screen_y];
-COORD bufferSize = {screen_x,screen_y-1};
+COORD bufferSize = {screen_x,screen_y};
 COORD characterPos = {0,0};
-SMALL_RECT windowSize = {0,0,screen_x,screen_y};
+SMALL_RECT windowSize = {0,0,screen_x-1,screen_y-1};
 DWORD fdwMode;
 DWORD numEvents = 0;
 DWORD numEventsRead = 0;
@@ -42,7 +43,7 @@ DWORD numEventsRead = 0;
 int main()
 {
     char ch;
-    int posx,posy,color=7;
+    int posx,posy,color=7,hit=0;
     setcursor(0);
     setMode();
     setConsole();
@@ -87,8 +88,24 @@ int main()
         clearbuffer();
         fill_star_to_buffer();
         fill_buffer_to_console();
-        draw_ship(posx,posy,color);
-        Sleep(100);
+        if(cursor(posx,posy)=='*'||cursor(posx+1,posy)=='*'||cursor(posx+2,posy)=='*'||cursor(posx-1,posy)=='*'||cursor(posx-2,posy)=='*')
+        {
+            Beep(400,200);
+            clearbuffer();
+            init_star();
+            fill_star_to_buffer();
+            fill_buffer_to_console();
+            hit++;
+            if(hit>=10)
+            {
+                playing=false;
+            }       
+        }
+        else
+        {
+            draw_ship(posx,posy,color);
+        }
+        Sleep(150);
     }
     return 0;
 }
@@ -128,10 +145,10 @@ void init_star()
 {
     int x,y;
     srand(time(NULL));
-    for(int i=0;i<18;i++)
+    for(int i=0;i<40;i++)
     {
         star[i].x=rand()%81;
-        star[i].y=(rand()%7)+1;
+        star[i].y=(rand()%5)+1;
     }
 }
 void fill_buffer_to_console()
@@ -146,7 +163,7 @@ void star_fall()
         if(star[i].y>=screen_y-1)
         {
             star[i].x=rand()%screen_x;
-            star[i].y=1;
+            star[i].y=0;
         }
         else
         {
@@ -156,7 +173,7 @@ void star_fall()
 }
 void fill_star_to_buffer()
 {
-    for(int i=0;i<18;i++)
+    for(int i=0;i<40;i++)
     {
         consoleBuffer[star[i].x+80 * star[i].y].Char.AsciiChar = '*';
         consoleBuffer[star[i].x+80 * star[i].y].Attributes=7;
@@ -177,4 +194,19 @@ void setcolor(int fg,int bg)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole,bg*16+fg);
+}
+char cursor(short x,short y)
+{
+    HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
+    char buf[2];
+    COORD c ={x,y};
+    DWORD num_read;
+    if(!ReadConsoleOutputCharacter(hStd,(LPTSTR)buf,1,c,(LPDWORD)&num_read))
+    {
+        return '\0';
+    }
+    else
+    {
+        return buf[0];
+    }
 }

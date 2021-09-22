@@ -84,14 +84,13 @@ int main()
             }
             delete[] eventBuffer;
         }
-        star_fall();
         clearbuffer();
+        star_fall();
         fill_star_to_buffer();
         fill_buffer_to_console();
         if(cursor(posx,posy)=='*'||cursor(posx+1,posy)=='*'||cursor(posx+2,posy)=='*'||cursor(posx-1,posy)=='*'||cursor(posx-2,posy)=='*')
         {
             Beep(400,200);
-            clearbuffer();
             init_star();
             fill_star_to_buffer();
             fill_buffer_to_console();
@@ -105,7 +104,7 @@ int main()
         {
             draw_ship(posx,posy,color);
         }
-        Sleep(150);
+        Sleep(100);
     }
     return 0;
 }
@@ -147,7 +146,7 @@ void init_star()
     srand(time(NULL));
     for(int i=0;i<40;i++)
     {
-        star[i].x=rand()%81;
+        star[i].x=rand()%80;
         star[i].y=(rand()%5)+1;
     }
 }

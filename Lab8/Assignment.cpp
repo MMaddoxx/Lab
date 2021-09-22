@@ -8,17 +8,16 @@
 #define screen_y 25
 #define scount 18
 #define esc 27
-/////////////////////////////////////////////////////////////////////
-///////////////////PROTORYPE FUNCTION ZONE///////////////////////////
-void setcursor(bool visible);
-int setConsole();
-void clearbuffer();
-void init_star();
-void fill_buffer_to_console();
-void fill_star_to_buffer();
+///////////////////PROTORYPE FUNCTION ////////////////////////////////
+int setConsole();//ตั้งกรอบหน้าจอ
+int setMode();
+void setcursor(bool visible);//เปิดปิดcursor
+void clearbuffer();//ล้างbuffer 
+void init_star();//สุ่มตอนเริ่มต้น
+void fill_buffer_to_console();//เอาbufferขึ้นจอ
+void fill_star_to_buffer();//เอาดาวไปใส่ในbuffer
 void star_fall();
-//////////////////////////////////////////////////////////////////////
-//////////////////////GLOBAL VARIABLE ZONE////////////////////////////
+//////////////////////GLOBAL VARIABLE/////////////////////////////////
 unsigned int score = 0;
 struct starfall
 {
@@ -26,40 +25,62 @@ struct starfall
     int y;
 };
 struct starfall star[scount];
+bool playing = true;
 HANDLE wHnd;
+HANDLE rHnd;
 CHAR_INFO consoleBuffer[screen_x * screen_y];
 COORD bufferSize = {screen_x,screen_y-1};
 COORD characterPos = {0,0};
 SMALL_RECT windowSize = {0,0,screen_x,screen_y};
-//////////////////////////////////////////////////////////////////////
+DWORD fdwMode;
+DWORD numEvents = 0;
+DWORD numEventsRead = 0;
 //////////////////////////////MAIN////////////////////////////////////
 int main()
 {
     char ch;
     setcursor(0);
-    setConsole(screen_x,screen_y);
+    setMode();
+    setConsole();
     init_star();
     fill_star_to_buffer();
     fill_buffer_to_console();
-    while(ch!=27)
+    while(playing)
     {
-        if(kbhit())
+        GetNumberOfConsoleInputEvents(rHnd,&numEvents);
+        if(numEvents!=0)
         {
-            ch=getch();
-            if(ch==esc)
+            INPUT_RECORD* eventBuffer = new INPUT_RECORD[numEvents];
+            ReadConsoleInput(rHnd, eventBuffer, numEvents, &numEventsRead);
+            for(DWORD i=0;i<numEventsRead;++i)
             {
-                break;
+                if(eventBuffer[i].EventType == KEY_EVENT && eventBuffer[i].Event.KeyEvent.bKeyDown == true)
+                {
+                    if(eventBuffer[i].Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
+                    {
+                        playing = false;
+                    }
+                }
+                else if (eventBuffer[i].EventType==MOUSE_EVENT)
+                {
+                    int posx = eventBuffer[i].Event.MouseEvent.dwMousePosition.X;
+                    int posy = eventBuffer[i].Event.MouseEvent.dwMousePosition.Y;
+                    if(eventBuffer[i].Event.MouseEvent.dwButtonState&FROM_LEFT_1ST_BUTTON_PRESSED||eventBuffer[i].Event.KeyEvent.uChar.AsciiChar=='c')
+                    {
+                       
+                    }
+                    
+                }
             }
         }
-        clearbuffer();
         star_fall();
+        clearbuffer();
         fill_star_to_buffer();
         fill_buffer_to_console();
-        Sleep(100);
+        Sleep(500);
     }
     return 0;
 }
-//////////////////////////////////////////////////////////////////////
 //////////////////////////FUNCTION////////////////////////////////////
 void setcursor(bool visible)
 {
@@ -69,11 +90,18 @@ void setcursor(bool visible)
     lpCursor.dwSize = 18;
     SetConsoleCursorInfo(console,&lpCursor);//0คือปิด 1 คือเปิด
 }
-int setConsole(int x, int y)
+int setConsole()
 {
     wHnd = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleWindowInfo(wHnd,TRUE,&windowSize);
     SetConsoleScreenBufferSize(wHnd,bufferSize);
+}
+int setMode()
+{
+    rHnd = GetStdHandle(STD_INPUT_HANDLE);
+    fdwMode = ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT ;
+    SetConsoleMode(rHnd,fdwMode);
+    return 0;
 }
 void clearbuffer()
 {
@@ -122,4 +150,8 @@ void fill_star_to_buffer()
         consoleBuffer[star[i].x+80 * star[i].y].Char.AsciiChar = '*';
         consoleBuffer[star[i].x+80 * star[i].y].Attributes=7;
     }
+}
+void draw_ship(int x,int y)
+{
+    printf("<-0->");
 }

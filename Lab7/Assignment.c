@@ -9,11 +9,12 @@ void gotoxy(int x,int y);
 void draw_ship(int x, int y);
 void setcursor(bool visible);
 void setcolor(int fg,int bg);//fg คือสีตัวอักษร bg คือพื้นหลัง 
-void erase_ship();
-void firebullet();
-void erasebullet();
-void drawstar();
-char cursor();
+void erase_ship(int x, int y);
+void firebullet(int x,int y);
+void erasebullet(int x,int y);
+void draw_ship(int x,int y);
+char cursor(int x,int y);
+void drawstar(int n);
 void scorebox();
 int main()
 {
@@ -90,7 +91,7 @@ int main()
     } while (ch!='x'); 
     return 0;
 }
-void gotoxy(int x,int y)
+void gotoxy(short x,short y)
 {
     COORD c={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
@@ -114,7 +115,7 @@ void setcolor(int fg,int bg)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole,bg*16+fg);
 }
-void erase_ship(int x, int y)
+void erase_ship(short x, short y)
 {
     COORD c ={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
@@ -154,7 +155,7 @@ void drawstar(int n)
         }
     }
 }
-char cursor(int x,int y)//เอาไว้ตรวจสอบการชน
+char cursor(short x,short y)//เอาไว้ตรวจสอบการชน
 {
     HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
     char buf[2];

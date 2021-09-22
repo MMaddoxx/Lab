@@ -17,6 +17,9 @@ void init_star();//สุ่มตอนเริ่มต้น
 void fill_buffer_to_console();//เอาbufferขึ้นจอ
 void fill_star_to_buffer();//เอาดาวไปใส่ในbuffer
 void star_fall();
+void draw_ship(int x,int y,int color);
+void gotoxy(short x,short y);
+void setcolor(int fg,int bg);
 //////////////////////GLOBAL VARIABLE/////////////////////////////////
 unsigned int score = 0;
 struct starfall
@@ -39,6 +42,7 @@ DWORD numEventsRead = 0;
 int main()
 {
     char ch;
+    int posx,posy,color=7;
     setcursor(0);
     setMode();
     setConsole();
@@ -60,24 +64,31 @@ int main()
                     {
                         playing = false;
                     }
+                    if(eventBuffer[i].Event.KeyEvent.uChar.AsciiChar == 'c')
+                    {
+                        srand(time(NULL));
+                        color=(rand()%14)+1;
+                    }
                 }
                 else if (eventBuffer[i].EventType==MOUSE_EVENT)
                 {
-                    int posx = eventBuffer[i].Event.MouseEvent.dwMousePosition.X;
-                    int posy = eventBuffer[i].Event.MouseEvent.dwMousePosition.Y;
-                    if(eventBuffer[i].Event.MouseEvent.dwButtonState&FROM_LEFT_1ST_BUTTON_PRESSED||eventBuffer[i].Event.KeyEvent.uChar.AsciiChar=='c')
+                    posx = eventBuffer[i].Event.MouseEvent.dwMousePosition.X;
+                    posy = eventBuffer[i].Event.MouseEvent.dwMousePosition.Y;
+                    if(eventBuffer[i].Event.MouseEvent.dwButtonState&FROM_LEFT_1ST_BUTTON_PRESSED)
                     {
-                       
-                    }
-                    
+                        srand(time(NULL));
+                        color=(rand()%14)+1;
+                    }           
                 }
             }
+            delete[] eventBuffer;
         }
         star_fall();
         clearbuffer();
         fill_star_to_buffer();
         fill_buffer_to_console();
-        Sleep(500);
+        draw_ship(posx,posy,color);
+        Sleep(100);
     }
     return 0;
 }
@@ -151,7 +162,19 @@ void fill_star_to_buffer()
         consoleBuffer[star[i].x+80 * star[i].y].Attributes=7;
     }
 }
-void draw_ship(int x,int y)
+void draw_ship(int x,int y,int color)
 {
+    gotoxy(x-2,y);
+    setcolor(color,0);
     printf("<-0->");
+}
+void gotoxy(short x,short y)
+{
+    COORD c={x,y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
+}
+void setcolor(int fg,int bg)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole,bg*16+fg);
 }

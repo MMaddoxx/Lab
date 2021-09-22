@@ -91,7 +91,7 @@ int main()
     } while (ch!='x'); 
     return 0;
 }
-void gotoxy(short x,short y)
+void gotoxy(int x,int y)
 {
     COORD c={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
@@ -115,7 +115,7 @@ void setcolor(int fg,int bg)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole,bg*16+fg);
 }
-void erase_ship(short x, short y)
+void erase_ship(int x, int y)
 {
     COORD c ={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
@@ -155,7 +155,7 @@ void drawstar(int n)
         }
     }
 }
-char cursor(short x,short y)//เอาไว้ตรวจสอบการชน
+char cursor(int x,int y)//เอาไว้ตรวจสอบการชน
 {
     HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
     char buf[2];

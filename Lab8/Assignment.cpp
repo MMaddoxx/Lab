@@ -10,7 +10,7 @@
 #define esc 27
 ///////////////////PROTORYPE FUNCTION ////////////////////////////////
 int setConsole();//ตั้งกรอบหน้าจอ
-int setMode();
+int setMode();//setการรับข้อมูล
 void setcursor(bool visible);//เปิดปิดcursor
 void clearbuffer();//ล้างbuffer 
 void init_star();//สุ่มตอนเริ่มต้น

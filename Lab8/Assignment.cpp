@@ -18,9 +18,9 @@ void fill_buffer_to_console();//เอาbufferขึ้นจอ
 void fill_star_to_buffer();//เอาดาวไปใส่ในbuffer
 void star_fall();
 void draw_ship(int x,int y,int color);
-void gotoxy(short x,short y);
+void gotoxy(SHORT x,SHORT y);
 void setcolor(int fg,int bg);
-char cursor(short x,short y);
+char cursor(SHORT x,SHORT y);
 //////////////////////GLOBAL VARIABLE/////////////////////////////////
 unsigned int score = 0;
 struct starfall
@@ -175,8 +175,8 @@ void fill_star_to_buffer()
 {
     for(int i=0;i<40;i++)
     {
-        consoleBuffer[star[i].x+80 * star[i].y].Char.AsciiChar = '*';
-        consoleBuffer[star[i].x+80 * star[i].y].Attributes=7;
+        consoleBuffer[star[i].x+screen_x * star[i].y].Char.AsciiChar = '*';
+        consoleBuffer[star[i].x+screen_x * star[i].y].Attributes=7;
     }
 }
 void draw_ship(int x,int y,int color)
@@ -185,7 +185,7 @@ void draw_ship(int x,int y,int color)
     setcolor(color,0);
     printf("<-0->");
 }
-void gotoxy(short x,short y)
+void gotoxy(SHORT x,SHORT y)
 {
     COORD c={x,y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),c);
@@ -195,7 +195,7 @@ void setcolor(int fg,int bg)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole,bg*16+fg);
 }
-char cursor(short x,short y)
+char cursor(SHORT x,SHORT y)
 {
     HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
     char buf[2];
